@@ -150,3 +150,27 @@ main { padding-top: 22px; padding-bottom: 34px; }
   .card { padding: 14px; }
   .data-table th, .data-table td { padding: 7px 8px; }
 }
+
+/* Overview density — round 2 iteration (scoped to the Overview page only,
+   so Population / Economy / People / Data render exactly as before). */
+.ov .page-head { margin-bottom: 12px; }
+.ov .kpi { padding: 10px 12px; }
+.ov .kpi-value { font-size: 30px; }
+.ov .kpi-grid { margin-bottom: 12px; }
+.kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.mini-kpi {
+  background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--navy);
+  border-radius: 8px; padding: 10px 12px; min-width: 0;
+}
+.mini-kpi-label { display: block; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--slate); }
+.mini-kpi-value { display: block; font-size: 22px; font-weight: 800; color: var(--navy); margin: 2px 0 1px; white-space: nowrap; }
+.mini-kpi-sub { display: block; font-size: 12px; color: var(--slate); line-height: 1.4; }
+.mini-head { font-size: 13px; font-weight: 700; color: var(--navy); margin: 14px 0 6px; }
+@media (max-width: 900px) {
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .ov .kpi-value { font-size: 24px; }
+  .mini-kpi-value { font-size: 19px; }
+}

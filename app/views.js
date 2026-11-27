@@ -41,6 +41,12 @@ function kpi(label, value, sub) {
   return `<div class="kpi"><span class="kpi-label">${label}</span><span class="kpi-value">${value}</span><span class="kpi-sub">${sub}</span></div>`;
 }
 
+// Compact second-row indicator: same store figures, smaller card, for the
+// Overview first screen (round 2 density iteration).
+function miniKpi(label, value, sub) {
+  return `<div class="mini-kpi"><span class="mini-kpi-label">${label}</span><span class="mini-kpi-value">${value}</span><span class="mini-kpi-sub">${sub}</span></div>`;
+}
+
 function section(title, inner, note) {
   return `<section class="card"><h2>${title}</h2>${inner}${note ? `<p class="note">${note}</p>` : ""}</section>`;
 }
@@ -62,16 +68,24 @@ export function viewOverview() {
     values: YEARS.map((year) => valueAt("gdp", year)),
     format: (v) => `$${v}bn`,
   });
+  const quarterly = miniBars({ rows: QUARTERLY_GROWTH, height: 110 });
   const regionBars = hbarChart({
     rows: REGIONS.map((r) => ({ label: r.name, value: r.population })),
     format: (v) => `${v.toFixed(2)}m`,
+  });
+  const ageBars = hbarChart({
+    rows: AGE_GROUPS.map((g) => ({ label: g.label, value: g.share })),
+    format: (v) => `${v.toFixed(1)}%`,
+    barHeight: 20,
+    gap: 8,
   });
   const releases = RELEASES.map(
     (r) => `<li><b>${r.title}</b><span>${r.date} — ${r.note}</span></li>`,
   ).join("");
   return `
+  <div class="ov">
   <div class="page-head"><div><h1>Meridia in ${y}</h1>
-  <p class="lede">The Republic of Meridia at a glance: ${fmt(valueAt("population", y), "millions")} people, a ${fmt(valueAt("gdp", y), "billions")} economy, and unemployment at ${fmt(valueAt("unemployment", y), "rate1")}.</p></div>${yearPicker()}</div>
+  <p class="lede">${fmt(valueAt("population", y), "millions")} people · ${fmt(valueAt("gdp", y), "billions")} economy · unemployment ${fmt(valueAt("unemployment", y), "rate1")} · CPI +${fmt(valueAt("cpi", y), "rate1")} · ${fmt(valueAt("life_expectancy", y), "years1")} years.</p></div>${yearPicker()}</div>
   <div class="kpi-grid">
     ${kpi("Population", fmt(valueAt("population", y), "millions"), `${fmtSignedPercent(yearOnYear("population", y))} on ${y - 1}`)}
     ${kpi("GDP", fmt(valueAt("gdp", y), "billions"), `Real growth ${fmt(valueAt("real_growth", y), "percent1")}`)}
@@ -80,9 +94,15 @@ export function viewOverview() {
     ${kpi("Consumer prices", fmt(valueAt("cpi", y), "rate1"), "Annual average inflation")}
     ${kpi("Life expectancy", `${fmt(valueAt("life_expectancy", y), "years1")} years`, `Female ${fmt(84.1, "years1")} · Male ${fmt(80.7, "years1")}`)}
   </div>
+  <div class="kpi-strip">
+    ${miniKpi("Trade balance", fmt(tradeBalance(y), "billions"), `Exports ${fmt(valueAt("exports", y), "billions")} · Imports ${fmt(valueAt("imports", y), "billions")}`)}
+    ${miniKpi("Employment", fmt(LABOUR.employed, "millions"), `Participation ${fmt(LABOUR.participation, "rate1")} · ${fmt(LABOUR.unemployed, "millions")} unemployed`)}
+    ${miniKpi("Median wage", fmt(valueAt("median_wage", y), "dollars"), `Per month · 2019: ${fmt(valueAt("median_wage", 2019), "dollars")}`)}
+    ${miniKpi("Median age", `${fmt(valueAt("median_age", y), "years1")} years`, `65+ share ${AGE_GROUPS[2].share}% · 0–14 share ${AGE_GROUPS[0].share}%`)}
+  </div>
   <div class="two-col">
-    ${section(`GDP, ${YEARS[0]}–${LATEST_YEAR} ($ billion)`, gdpLine, `GDP rose from ${fmt(valueAt("gdp", 2019), "billions")} in 2019 to ${fmt(valueAt("gdp", LATEST_YEAR), "billions")} in 2026. The 2020 dip (−2.7% real) was followed by a 6.6% rebound in 2021.`)}
-    ${section("Population by region, 2026 (millions)", regionBars, `Five regions add up to ${regionPopulationTotal().toFixed(2)} million — Central alone holds ${REGIONS[0].share}% of the country.`)}
+    ${section(`GDP, ${YEARS[0]}–${LATEST_YEAR} ($ billion)`, `${gdpLine}<p class="mini-head">Real growth, quarter on quarter</p>${quarterly}`, `GDP rose from ${fmt(valueAt("gdp", 2019), "billions")} in 2019 to ${fmt(valueAt("gdp", LATEST_YEAR), "billions")} in 2026.`)}
+    ${section("Population by region, 2026 (millions)", `${regionBars}<p class="mini-head">Age structure, 2026 (% of population)</p>${ageBars}`, `Five regions add up to ${regionPopulationTotal().toFixed(2)} million — Central alone holds ${REGIONS[0].share}% of the country.`)}
   </div>
   <div class="two-col">
     ${section("Latest releases", `<ul class="releases">${releases}</ul>`, "Every release names its date and its headline finding.")}
@@ -93,6 +113,7 @@ export function viewOverview() {
         <div><dt>Work</dt><dd>${fmt(LABOUR.employed, "millions")} employed, participation ${fmt(LABOUR.participation, "rate1")}, median wage ${fmt(valueAt("median_wage", 2026), "dollars")} a month.</dd></div>
         <div><dt>Ageing</dt><dd>Median age ${fmt(valueAt("median_age", 2026), "years1")} years; ${AGE_GROUPS[2].share}% of the population is 65 or older.</dd></div>
       </dl>`, "Figures are rounded; components may not sum exactly to a rounded total.")}
+  </div>
   </div>`;
 }
 

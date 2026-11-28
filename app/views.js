@@ -68,7 +68,7 @@ export function viewOverview() {
     values: YEARS.map((year) => valueAt("gdp", year)),
     format: (v) => `$${v}bn`,
   });
-  const quarterly = miniBars({ rows: QUARTERLY_GROWTH, height: 110 });
+  const quarterly = miniBars({ rows: QUARTERLY_GROWTH, height: 84 });
   const regionBars = hbarChart({
     rows: REGIONS.map((r) => ({ label: r.name, value: r.population })),
     format: (v) => `${v.toFixed(2)}m`,
@@ -100,6 +100,13 @@ export function viewOverview() {
     ${miniKpi("Median wage", fmt(valueAt("median_wage", y), "dollars"), `Per month · 2019: ${fmt(valueAt("median_wage", 2019), "dollars")}`)}
     ${miniKpi("Median age", `${fmt(valueAt("median_age", y), "years1")} years`, `65+ share ${AGE_GROUPS[2].share}% · 0–14 share ${AGE_GROUPS[0].share}%`)}
   </div>
+  <div class="kpi-strip kpi-strip-2">
+    ${miniKpi("Net migration", fmt(change.migration, "signed"), `Long-term arrivals minus departures, ${y}`)}
+    ${miniKpi("Natural increase", fmt(change.natural, "signed"), `${fmt(valueAt("births", y), "integer")} births − ${fmt(valueAt("deaths", y), "integer")} deaths`)}
+    ${miniKpi("Services share of GDP", `${SECTORS[0].share}%`, `Industry ${SECTORS[1].share}% · Agriculture ${SECTORS[2].share}% — shares sum to ${sectorShareTotal().toFixed(1)}%`)}
+    ${miniKpi("Median household income", fmt(LABOUR.medianHouseholdIncome, "dollars"), `Per year, ${y} · Median wage ${fmt(valueAt("median_wage", y), "dollars")} a month`)}
+  </div>
+  <div class="ov-sources"><a href="#/data">Sources &amp; methods →</a><span>Every figure is defined and sourced: 14 indicators, 2019–2026, CSV download on the Data page.</span></div>
   <div class="two-col">
     ${section(`GDP, ${YEARS[0]}–${LATEST_YEAR} ($ billion)`, `${gdpLine}<p class="mini-head">Real growth, quarter on quarter</p>${quarterly}`, `GDP rose from ${fmt(valueAt("gdp", 2019), "billions")} in 2019 to ${fmt(valueAt("gdp", LATEST_YEAR), "billions")} in 2026.`)}
     ${section("Population by region, 2026 (millions)", `${regionBars}<p class="mini-head">Age structure, 2026 (% of population)</p>${ageBars}`, `Five regions add up to ${regionPopulationTotal().toFixed(2)} million — Central alone holds ${REGIONS[0].share}% of the country.`)}

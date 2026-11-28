@@ -153,10 +153,25 @@ main { padding-top: 22px; padding-bottom: 34px; }
 
 /* Overview density — round 2 iteration (scoped to the Overview page only,
    so Population / Economy / People / Data render exactly as before). */
-.ov .page-head { margin-bottom: 12px; }
-.ov .kpi { padding: 10px 12px; }
-.ov .kpi-value { font-size: 30px; }
-.ov .kpi-grid { margin-bottom: 12px; }
+.ov .page-head { margin-bottom: 8px; }
+.ov .kpi { padding: 8px 12px; }
+.ov .kpi-value { font-size: 28px; }
+.ov .kpi-grid { margin-bottom: 10px; }
+.ov .kpi-strip { margin-bottom: 10px; }
+.ov .mini-kpi { padding: 8px 12px; }
+.ov .mini-kpi-value { font-size: 20px; }
+.ov .two-col .card { padding: 12px 16px; }
+.ov .card h2 { margin-bottom: 8px; }
+.ov .mini-head { margin: 10px 0 4px; }
+/* Round 3: second mini-KPI row (inner-page figures) + visible Sources &
+   methods entry on the cover. */
+.ov-sources {
+  display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap;
+  background: var(--navy); color: #dbe3ea; border-radius: 8px;
+  padding: 9px 14px; font-size: 13.5px; margin-bottom: 12px;
+}
+.ov-sources a { color: var(--ochre); font-weight: 800; text-decoration: none; white-space: nowrap; }
+.ov-sources a:hover { text-decoration: underline; }
 .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
 .mini-kpi {
   background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--navy);
